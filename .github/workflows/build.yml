@@ -1,0 +1,26 @@
+name: Rebuild blocklist
+on:
+  schedule:
+    - cron: "30 2 * * *"   # before ESP32_AdBlocker's 04:00 UTC daily reload
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/fetch_sources.sh lists
+      - run: python3 scripts/build_list.py lists blocklist.txt 75000
+      - name: Sanity check
+        run: |
+          n=$(grep -vc '^#' blocklist.txt)
+          echo "domains: $n"; [ "$n" -gt 60000 ]
+          for d in doubleclick.net googlesyndication.com; do grep -qxF "$d" blocklist.txt; done
+          for d in google.com youtube.com apple.com; do ! grep -qxF "$d" blocklist.txt; done
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add blocklist.txt
+          git diff --cached --quiet || git commit -m "Daily blocklist rebuild" && git push
