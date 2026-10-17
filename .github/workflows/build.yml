@@ -14,13 +14,13 @@ jobs:
       - run: python3 scripts/build_list.py lists blocklist.txt 75000
       - name: Sanity check
         run: |
-          n=$(grep -vc '^#' blocklist.txt)
+          n=$(grep -c '^||' blocklist.txt)
           echo "domains: $n"; [ "$n" -gt 60000 ]
-          for d in doubleclick.net googlesyndication.com; do grep -qxF "$d" blocklist.txt; done
-          for d in google.com youtube.com apple.com; do ! grep -qxF "$d" blocklist.txt; done
+          for d in doubleclick.net googlesyndication.com; do grep -qxF "||$d^" blocklist.txt; done
+          for d in google.com youtube.com apple.com; do ! grep -qxF "||$d^" blocklist.txt; done
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add blocklist.txt
-          git diff --cached --quiet || git commit -m "Daily blocklist rebuild" && git push
+          if ! git diff --cached --quiet; then git commit -m "Daily blocklist rebuild" && git push; fi

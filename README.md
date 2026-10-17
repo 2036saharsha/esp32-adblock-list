@@ -14,4 +14,6 @@ A consensus-ranked DNS blocklist sized for [ESP32_AdBlocker](https://github.com/
 
 A GitHub Action rebuilds the list daily at 02:30 UTC.
 
+**Format:** Adblock-style `||domain^` lines (ESP32_AdBlocker only parses hosts or Adblock lines, not bare domains).
+
 **Wildcard semantics:** each entry is meant to block itself *and all subdomains*. Stock ESP32_AdBlocker only blocks exact names, so it needs the parent-domain lookup patch (`isBlockedWild` in `appSpecific.cpp`) for full effect.

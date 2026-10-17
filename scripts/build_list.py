@@ -120,7 +120,7 @@ with open(OUT, "w") as f:
     f.write(f"# {len(chosen)} domains: {len(must)} device-telemetry + top consensus ad/tracker domains\n")
     f.write("# Sources: HaGeZi (pro, pro.mini, multi, light, native.*), OISD big, AdGuard DNS,\n")
     f.write("#          StevenBlack, 1Hosts Lite, EasyPrivacy, Peter Lowe. Ranked by agreement + Tranco.\n")
-    for d in sorted(chosen): f.write(d + "\n")
+    for d in sorted(chosen): f.write("||" + d + "^\n")   # Adblock format: ESP32_AdBlocker ignores bare domains
 
 sizes = [len(d) + 1 for d in chosen]
 print(f"pool after collapse: {len(pool)}  native: {len(must)}  consensus>=2: {len(rest)}")
